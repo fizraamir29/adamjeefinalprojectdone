@@ -1,7 +1,4 @@
 import { NextResponse } from 'next/server';
-
-export const dynamic = 'force-dynamic'; // Prevent Next.js from caching API responses (fixes mock mode caching)
-
 import fs from 'fs';
 import path from 'path';
 import mongoose from 'mongoose';
@@ -29,7 +26,7 @@ import Invoice from '@/lib/models/Invoice';
 import Blog from '@/lib/models/Blog';
 import Discount from '@/lib/models/Discount';
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // Prevent Next.js from caching API responses
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 const JWT_EXPIRE = process.env.JWT_EXPIRE || '7d';
