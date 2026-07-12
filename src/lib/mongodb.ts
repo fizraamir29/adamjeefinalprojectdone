@@ -8,8 +8,8 @@ if (!cached) {
   cached = (global as any).mongoose = { conn: null, promise: null, failedAt: 0 };
 }
 
-// Only retry MongoDB connection every 60 seconds after a failure
-const RETRY_AFTER_MS = 60_000;
+// Only retry MongoDB connection every 10 seconds after a failure (reduced from 60s for serverless)
+const RETRY_AFTER_MS = 10_000;
 
 export async function connectDB() {
   if (!MONGODB_URI) {
@@ -28,8 +28,8 @@ export async function connectDB() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
-      serverSelectionTimeoutMS: 3000,
-      connectTimeoutMS: 3000,
+      serverSelectionTimeoutMS: 15000, // Increased for Vercel cold starts
+      connectTimeoutMS: 15000,
     };
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
