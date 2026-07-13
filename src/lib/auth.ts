@@ -38,11 +38,12 @@ export async function getAuthenticatedUser(req: Request): Promise<AuthUser | nul
           isActive: mockUser.isActive
         };
       }
+      // Fall back to JWT claims (role is embedded in token since fix)
       return {
         id: decoded.id,
-        name: decoded.id === '555555555555555555555555' ? 'Adamjee Admin' : 'Test User',
-        email: decoded.email || (decoded.id === '555555555555555555555555' ? 'admin@admin.gmail.com' : 'testuser@gmail.com'),
-        role: decoded.id === '555555555555555555555555' ? 'admin' : 'customer',
+        name: decoded.name || (decoded.email ? decoded.email.split('@')[0] : 'User'),
+        email: decoded.email || '',
+        role: decoded.role || 'customer',
         isActive: true
       };
     }

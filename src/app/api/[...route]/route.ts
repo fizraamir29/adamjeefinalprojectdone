@@ -31,8 +31,8 @@ export const dynamic = 'force-dynamic'; // Prevent Next.js from caching API resp
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 const JWT_EXPIRE = process.env.JWT_EXPIRE || '7d';
 
-const generateToken = (userId: string, email: string) => {
-  return jwt.sign({ id: userId, email }, JWT_SECRET, {
+const generateToken = (userId: string, email: string, role: string = 'customer') => {
+  return jwt.sign({ id: userId, email, role }, JWT_SECRET, {
     expiresIn: (JWT_EXPIRE as any),
   });
 };
@@ -639,7 +639,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ route: 
           createdAt: new Date().toISOString()
         };
         mockUsersMemory.push(newUser);
-        const token = generateToken(mockId, email);
+        const token = generateToken(mockId, email, 'customer');
         return NextResponse.json({
           success: true,
           message: 'Account created successfully (Mock mode)!',
@@ -658,7 +658,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ route: 
       }
 
       const user = await User.create({ name, email, password });
-      const token = generateToken(user._id, user.email);
+      const token = generateToken(user._id, user.email, user.role);
 
       return NextResponse.json({
         success: true,
@@ -690,7 +690,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ route: 
         if (!user.isActive) {
           return NextResponse.json({ success: false, message: 'Your account has been deactivated.' }, { status: 403 });
         }
-        const token = generateToken(user._id, email);
+        const token = generateToken(user._id, email, user.role);
         return NextResponse.json({
           success: true,
           message: 'Login successful (Mock mode)!',
@@ -712,7 +712,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ route: 
         return NextResponse.json({ success: false, message: 'Your account has been deactivated.' }, { status: 403 });
       }
 
-      const token = generateToken(user._id, user.email);
+      const token = generateToken(user._id, user.email, user.role);
       return NextResponse.json({
         success: true,
         message: 'Login successful!',
@@ -750,7 +750,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ route: 
         if (!user.isActive) {
           return NextResponse.json({ success: false, message: 'Your account has been deactivated.' }, { status: 403 });
         }
-        const token = generateToken(user._id, email);
+        const token = generateToken(user._id, email, user.role);
         return NextResponse.json({
           success: true,
           message: 'Google login successful (Mock mode)!',
@@ -778,7 +778,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ route: 
         return NextResponse.json({ success: false, message: 'Your account has been deactivated.' }, { status: 403 });
       }
 
-      const token = generateToken(user._id, user.email);
+      const token = generateToken(user._id, user.email, user.role);
       return NextResponse.json({
         success: true,
         message: 'Google login successful!',
